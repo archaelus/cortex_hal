@@ -1,0 +1,15 @@
+[package]
+name = "cortex_hal"
+version = "0.1.0"
+authors = ["Zinc Developers <zinc@github.com>", "Geoff Cant <nem@erlang.geek.nz>"]
+
+[lib]
+name = "cortex_hal"
+
+[dependencies.ioreg]
+git = "https://github.com/archaelus/ioreg.git"
+
+[dependencies.volatile_cell]
+git = "https://github.com/archaelus/volatile_cell.git"
+
+[dependencies]
