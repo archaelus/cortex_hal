@@ -16,7 +16,6 @@
 //! Disabling and enabling interrupts
 
 use core::ops::Drop;
-#[cfg(target_os = "none")]
 use core::intrinsics::abort;
 
 /// Phantom type to indicate that interrupts are disabled.
@@ -44,36 +43,28 @@ impl Drop for NoInterrupts {
 }
 
 #[cfg(target_os = "none")]
-static mut irq_level : usize = 0;
+static mut IRQ_LEVEL : usize = 0;
 
 /// Disables all interrupts except Reset, HardFault, and NMI.
 /// Note that this is reference counted: if `disable_irqs` is called
 /// twice then interrupts will only be re-enabled upon the second call
 /// to `enable_irqs`.
-#[cfg(target_os = "none")]
 #[inline(always)]
 unsafe fn disable_irqs() {
   asm!("cpsid i" :::: "volatile");
-  irq_level += 1;
+  IRQ_LEVEL += 1;
 }
 
-#[cfg(not(target_os = "none"))]
-unsafe fn disable_irqs() { unimplemented!() }
-
 /// Enables all interrupts except Reset, HardFault, and NMI.
-#[cfg(target_os = "none")]
 #[inline(always)]
 unsafe fn enable_irqs() {
-  if irq_level == 0 {
+  if IRQ_LEVEL == 0 {
     abort();
   }
   // There is no race condition here as we know that interrupts are
   // disabled.
-  irq_level -= 1;
-  if irq_level == 0 {
+  IRQ_LEVEL -= 1;
+  if IRQ_LEVEL == 0 {
     asm!("cpsie i" :::: "volatile");
   }
 }
-
-#[cfg(not(target_os = "none"))]
-unsafe fn enable_irqs() { unimplemented!() }
