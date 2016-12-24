@@ -27,14 +27,16 @@ extern {
 /// Copies `.data` sections in to RAM and initializes `.bss` sections to zero.
 #[inline(always)]
 pub fn init() {
-    use core::intrinsics::volatile_copy_memory;
+    use core::mem::size_of;
+    use core::intrinsics::{copy, write_bytes};
+
     // Copy .data from flash (_data.._edata) to ram (_data_load..)
-    unsafe { volatile_copy_memory::<usize>(_data_load as *mut usize,
-                                           _data as *const usize,
-                                           _edata - _data); }
-    use core::intrinsics::volatile_set_memory;
+    unsafe { copy::<usize>(_data as *const usize,
+                           _data_load as *mut usize,
+                           (_edata - _data)/size_of::<usize>()); }
+
     // Zero the .bss section (_bss.._ebss)
-    unsafe { volatile_set_memory::<usize>(_bss as *mut usize,
-                                          0,
-                                          _ebss - _bss); }
+    unsafe { write_bytes::<usize>(_bss as *mut usize,
+                                  0,
+                                  (_ebss - _bss)/size_of::<usize>()); }
 }
