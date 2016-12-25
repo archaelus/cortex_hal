@@ -17,6 +17,7 @@
 
 #![feature(const_fn)]
 #![feature(asm)]
+#![feature(lang_items)]
 #![deny(missing_docs)]
 #![no_std]
 #![feature(plugin)]
@@ -38,3 +39,4 @@ pub mod systick;
 pub mod mpu;
 pub mod irq;
 
+pub mod lang_items;
